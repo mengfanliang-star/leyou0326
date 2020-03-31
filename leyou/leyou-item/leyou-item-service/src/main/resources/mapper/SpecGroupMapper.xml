@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.leyou.item.mapper.BrandMapper">
-  <resultMap id="BaseResultMap" type="com.leyou.item.pojo.Brand">
+<mapper namespace="com.leyou.item.mapper.SpecGroupMapper">
+  <resultMap id="BaseResultMap" type="com.leyou.item.pojo.SpecGroup">
     <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cid" jdbcType="BIGINT" property="cid" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="image" jdbcType="VARCHAR" property="image" />
-    <result column="letter" jdbcType="CHAR" property="letter" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -66,15 +65,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `name`, image, letter
+    id, cid, `name`
   </sql>
-  <select id="selectByExample" parameterType="com.leyou.item.pojo.BrandExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.leyou.item.pojo.SpecGroupExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from tb_brand
+    from tb_spec_group
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -85,75 +84,59 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from tb_brand
+    from tb_spec_group
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from tb_brand
+    delete from tb_spec_group
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.leyou.item.pojo.BrandExample">
-    delete from tb_brand
+  <delete id="deleteByExample" parameterType="com.leyou.item.pojo.SpecGroupExample">
+    delete from tb_spec_group
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.leyou.item.pojo.Brand" useGeneratedKeys="true">
-    insert into tb_brand (`name`, image, letter
-      )
-    values (#{name,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR}, #{letter,jdbcType=CHAR}
-      )
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.leyou.item.pojo.SpecGroup" useGeneratedKeys="true">
+    insert into tb_spec_group (cid, `name`)
+    values (#{cid,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.leyou.item.pojo.Brand" useGeneratedKeys="true">
-    insert into tb_brand
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.leyou.item.pojo.SpecGroup" useGeneratedKeys="true">
+    insert into tb_spec_group
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cid != null">
+        cid,
+      </if>
       <if test="name != null">
         `name`,
       </if>
-      <if test="image != null">
-        image,
-      </if>
-      <if test="letter != null">
-        letter,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="cid != null">
+        #{cid,jdbcType=BIGINT},
+      </if>
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="image != null">
-        #{image,jdbcType=VARCHAR},
-      </if>
-      <if test="letter != null">
-        #{letter,jdbcType=CHAR},
-      </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.leyou.item.pojo.BrandExample" resultType="java.lang.Long">
-    select count(*) from tb_brand
+  <select id="countByExample" parameterType="com.leyou.item.pojo.SpecGroupExample" resultType="java.lang.Long">
+    select count(*) from tb_spec_group
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
-  <select id="selectByCid" parameterType="java.lang.Long" resultType="com.leyou.item.pojo.Brand">
-    SELECT *
-    FROM tb_brand b INNER JOIN tb_category_brand c ON b.id=c.brand_id WHERE c.category_id=#{cid}
-  </select>
-
   <update id="updateByExampleSelective" parameterType="map">
-    update tb_brand
+    update tb_spec_group
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
+      <if test="record.cid != null">
+        cid = #{record.cid,jdbcType=BIGINT},
+      </if>
       <if test="record.name != null">
         `name` = #{record.name,jdbcType=VARCHAR},
-      </if>
-      <if test="record.image != null">
-        image = #{record.image,jdbcType=VARCHAR},
-      </if>
-      <if test="record.letter != null">
-        letter = #{record.letter,jdbcType=CHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -161,35 +144,30 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update tb_brand
+    update tb_spec_group
     set id = #{record.id,jdbcType=BIGINT},
-      `name` = #{record.name,jdbcType=VARCHAR},
-      image = #{record.image,jdbcType=VARCHAR},
-      letter = #{record.letter,jdbcType=CHAR}
+      cid = #{record.cid,jdbcType=BIGINT},
+      `name` = #{record.name,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.leyou.item.pojo.Brand">
-    update tb_brand
+  <update id="updateByPrimaryKeySelective" parameterType="com.leyou.item.pojo.SpecGroup">
+    update tb_spec_group
     <set>
+      <if test="cid != null">
+        cid = #{cid,jdbcType=BIGINT},
+      </if>
       <if test="name != null">
         `name` = #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="image != null">
-        image = #{image,jdbcType=VARCHAR},
-      </if>
-      <if test="letter != null">
-        letter = #{letter,jdbcType=CHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.leyou.item.pojo.Brand">
-    update tb_brand
-    set `name` = #{name,jdbcType=VARCHAR},
-      image = #{image,jdbcType=VARCHAR},
-      letter = #{letter,jdbcType=CHAR}
+  <update id="updateByPrimaryKey" parameterType="com.leyou.item.pojo.SpecGroup">
+    update tb_spec_group
+    set cid = #{cid,jdbcType=BIGINT},
+      `name` = #{name,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

@@ -22,6 +22,16 @@ public class BrandServiceImpl implements BrandService {
     private BrandMapper brandMapper;
     @Autowired
     private CategoryBrandMapper categoryBrandMapper;
+    /**
+     * 分页查询品牌
+     *
+     * @param key
+     * @param page
+     * @param rows
+     * @param sortBy
+     * @param desc
+     * @return
+     */
     @Override
     public PageResult<Brand> queryBrandsByPage(String key, Integer page, Integer rows, String sortBy, Boolean desc) {
         BrandExample brandExample = new BrandExample();
@@ -40,6 +50,12 @@ public class BrandServiceImpl implements BrandService {
         return new PageResult<>(brandPageInfo.getTotal(),brandPageInfo.getList());
 
     }
+    /**
+     * 添加品牌
+     * @param brand
+     * @param cids
+     * @return
+     */
 @Transactional
     @Override
     public void saveBrand(Brand brand, List<Long> cids) {
@@ -52,6 +68,19 @@ public class BrandServiceImpl implements BrandService {
         }
 
 
+
+    }
+
+    @Override
+    public List<Brand> queryBrandsByCid(Long cid) {
+        List<Brand> brands = this.brandMapper.selectByCid(cid);
+        return brands;
+    }
+
+    @Override
+    public Brand queryBrandById(Long id) {
+
+    return this.brandMapper.selectByPrimaryKey(id);
 
     }
 }

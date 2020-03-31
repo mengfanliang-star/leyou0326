@@ -6,6 +6,7 @@ import com.leyou.item.pojo.CategoryExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -19,5 +20,21 @@ public class CategoryServiceImpl implements CategoryService {
         List<Category> categories = categoryMapper.selectByExample(categoryExample);
         return categories;
 
+    }
+
+    /**
+     * 根据分类id集合,查询名称集合.
+     * @param ids
+     * @return
+     */
+    @Override
+    public List<String> queryNamesByIds(List<Long> ids) {
+        List<String> names = new ArrayList<>();
+        for (Long id : ids) {
+            Category category = this.categoryMapper.selectByPrimaryKey(id);
+            names.add(category.getName());
+        }
+
+        return names;
     }
 }

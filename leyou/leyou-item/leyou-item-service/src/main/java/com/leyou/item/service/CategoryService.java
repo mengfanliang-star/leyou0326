@@ -7,4 +7,10 @@ import java.util.List;
 public interface CategoryService {
 
     List<Category> queryCategoriesByPid(Long pid);
+    /**
+     * 根据分类id集合,查询名称集合.
+     * @param ids
+     * @return
+     */
+    List<String> queryNamesByIds(List<Long> ids);
 }

@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("category")
-@CrossOrigin
+//@CrossOrigin
 public class CategoryAction {
     @Autowired
     private CategoryService categoryService;
@@ -36,6 +36,25 @@ public class CategoryAction {
 
         }
         return ResponseEntity.ok(categories);
+
+
+    }
+
+    /**
+     * 根据分类ids(多个)查询分类名称(多个)
+     * @param ids
+     * @return
+     */
+    @GetMapping
+    public ResponseEntity<List<String>> queryNamesByIds(@RequestParam("ids")List<Long> ids){
+        List<String> names = this.categoryService.queryNamesByIds(ids);
+        if(CollectionUtils.isEmpty(names)){
+
+            return ResponseEntity.notFound().build();
+
+        }
+        return ResponseEntity.ok(names);
+
     }
 
 }

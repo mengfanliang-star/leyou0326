@@ -29,4 +29,6 @@ public interface BrandMapper {
     int updateByPrimaryKeySelective(Brand record);
 
     int updateByPrimaryKey(Brand record);
+
+    List<Brand> selectByCid(Long cid);
 }

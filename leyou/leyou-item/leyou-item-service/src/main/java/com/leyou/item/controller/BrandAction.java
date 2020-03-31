@@ -13,7 +13,7 @@ import java.security.PublicKey;
 import java.util.List;
 
 @RestController
-@CrossOrigin
+//@CrossOrigin
 @RequestMapping("brand")
 public class BrandAction {
     @Autowired
@@ -29,7 +29,7 @@ public class BrandAction {
      * @param desc
      * @return
      */
-    @CrossOrigin
+    //@CrossOrigin
     @GetMapping("page")
     public ResponseEntity<PageResult<Brand>> queryBrandsByPage(
             @RequestParam(value = "key", required = false) String key,
@@ -48,9 +48,44 @@ public class BrandAction {
 
     }
 
+    /**
+     * 添加品牌
+     * @param brand
+     * @param cids
+     * @return
+     */
     @PostMapping()
     public ResponseEntity<Void> saveBrand(Brand brand, @RequestParam(value = "cids", required = true) List<Long> cids) {
         this.brandService.saveBrand(brand, cids);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * 根据分类cid查询分类下面的品牌
+     * @param cid
+     * @return
+     */
+    @GetMapping("cid/{cid}")
+    public ResponseEntity<List<Brand>> queryBrandsByCid(@PathVariable("cid")Long cid){
+        List<Brand> brands= this.brandService.queryBrandsByCid(cid);
+        if(CollectionUtils.isEmpty(brands)){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(brands);
+    }
+
+    /**
+     * 根据id查询品牌
+     * @param id
+     * @return
+     */
+    @GetMapping("{id}")
+    public ResponseEntity<Brand> queryBrandById(@PathVariable("id")Long id){
+        Brand brand=this.brandService.queryBrandById(id);
+        if(brand==null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(brand);
+
     }
 }
