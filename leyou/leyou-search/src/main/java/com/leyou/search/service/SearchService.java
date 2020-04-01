@@ -3,16 +3,25 @@ package com.leyou.search.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leyou.common.pojo.PageResult;
 import com.leyou.item.pojo.*;
+import com.leyou.search.GoodsRepository;
 import com.leyou.search.client.BrandClient;
 import com.leyou.search.client.CategoryClient;
 import com.leyou.search.client.GoodsClient;
 import com.leyou.search.client.SpecificationClient;
 import com.leyou.search.pojo.Goods;
+import com.leyou.search.pojo.SearchRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.query.FetchSourceFilter;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +39,9 @@ public class SearchService {
     public static final ObjectMapper MAPPER=new ObjectMapper();
     @Autowired
     private SpecificationClient specificationClient;
+    @Autowired
+    private GoodsRepository goodsRepository;
+
     public Goods buildGoods(Spu spu) throws IOException {
         Goods goods = new Goods();
         /**
@@ -116,4 +128,29 @@ public class SearchService {
         return result;
     }
 
+    public PageResult<Goods> search(SearchRequest searchRequest) {
+        if(StringUtils.isBlank(searchRequest.getKey())){
+            return  null;
+        }
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+        queryBuilder.withQuery(QueryBuilders.matchQuery("all",searchRequest.getKey()).operator(Operator.AND));
+
+        queryBuilder.withPageable(PageRequest.of(searchRequest.getPage()-1,searchRequest.getSize()));
+
+        queryBuilder.withSourceFilter(new FetchSourceFilter(new String[]{"id","subTitle","skus"},null));
+
+        // 3、分页
+        // 准备分页参数
+//        int page = searchRequest.getPage();
+//        int size = searchRequest.getSize();
+//        queryBuilder.withPageable(PageRequest.of(page - 1, size));
+
+        // 4、查询，获取结果
+        Page<Goods> goodsPage = this.goodsRepository.search(queryBuilder.build());
+
+        // 封装结果并返回
+        return new PageResult<>(goodsPage.getTotalElements(), goodsPage.getTotalPages(), goodsPage.getContent());
+
+
+    }
 }
